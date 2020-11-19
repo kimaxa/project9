@@ -3,39 +3,58 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
-
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "D:\\chromedriver_win32\\chromedriver.exe");
         WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        driver.manage().timeouts().setScriptTimeout(2, TimeUnit.SECONDS);
         driver.get("https://www.avito.ru/");
+
         // Выбрать в выпадающем списке “категория” значение оргтехника и расходники
         Select categorySelector = new Select(driver.findElement(By.xpath("//select[@id='category']")));
         categorySelector.selectByVisibleText("Оргтехника и расходники");
+        Thread.sleep(1000);
+
         // В поле поиск по объявлению ввести значение “Принтер”
         driver.findElement(By.xpath("//input[@id='search']")).sendKeys("Принтер");
+        Thread.sleep(1000);
+
         //Нажать на поле город
-        driver.findElement(By.xpath("//div[@class='main-select-2pf7p main-location-3j9by']")).click();
-        //Заполнить значением “Владивосток” поле город  в открывшемся окне и кликнуть по первому предложенному варианту. Нажать на кнопку “Показать объявления”
-        driver.findElement(By.xpath("//input[@class='suggest-input-3p8yi']")).sendKeys("Владивосток");
+        driver.findElement(By.xpath("//div[@data-marker='search-form/region']")).click();
+        Thread.sleep(1000);
+
+        //Заполнить значением “Владивосток” поле город  в открывшемся окне и кликнуть по первому предложенному варианту.
+        //Нажать на кнопку “Показать объявления”
+        driver.findElement(By.xpath("//input[@data-marker='popup-location/region/input']")).sendKeys("Владивосток");
+        Thread.sleep(1000);
         driver.findElement(By.xpath("//li[@data-marker='suggest(0)']")).click();
-        driver.findElement(By.xpath("//button[@class='button-button-2Fo5k button-size-m-7jtw4 button-primary-1RhOG']")).click();
+        driver.findElement(By.xpath("//button[@data-marker='popup-location/save-button']")).click();
+        Thread.sleep(1000);
+
         //Проверить, активирован ли чекбокс, и если не активирован – активировать и нажать кнопку “Показать объявления”
-        WebElement checkbox = driver.findElement(By.xpath("//label[@data-marker='delivery-filter']"));
-        if (!checkbox.isSelected()) {
-        checkbox.click();
+        WebElement checkBox = driver.findElement(By.xpath("//input[@data-marker='delivery-filter/input']"));
+        if (!checkBox.isSelected()) {
+            checkBox.click();
         }
         driver.findElement(By.xpath("//button[@data-marker='search-filters/submit-button']")).click();
+        Thread.sleep(1000);
+
         //В выпадающем списке фильтрации выбрать фильтрацию по убыванию цены.
         Select priceSelector = new Select(driver.findElement(By.xpath("//div[@class='form-select-v2 sort-select-3QxXG']")));
         priceSelector.selectByVisibleText("Дороже");
+        Thread.sleep(1000);
+
         //Вывести в консоль название и стоимость 3х самых дорогих принтеров
+        List<WebElement> printers = driver.findElements(By.xpath("//div[@class='item_table-wrapper']"));
+        for (int i = 0; i < 3; i++) {
+            System.out.println("Принтер №" + (i + 1));
+            System.out.println(printers.get(i).findElement(By.xpath("./div/div[@class='snippet-title-row']/h3/a")).getText());
+            System.out.println(printers.get(i).findElement(By.xpath("./div/div[@class='snippet-price-row']/span[@class='snippet-price ']")).getText());
+        }
 
 
     }
