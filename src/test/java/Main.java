@@ -3,13 +3,23 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
+    private WebDriver driver;
+
+    @BeforeMethod
+    public void start() {
         System.setProperty("webdriver.chrome.driver", "D:\\chromedriver_win32\\chromedriver.exe");
-        WebDriver driver = new ChromeDriver();
+        driver = new ChromeDriver();
+    }
+    @Test
+    public void test() throws InterruptedException {
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get("https://www.avito.ru/");
@@ -36,10 +46,9 @@ public class Main {
         Thread.sleep(1000);
 
         //Проверить, активирован ли чекбокс, и если не активирован – активировать и нажать кнопку “Показать объявления”
-        WebElement checkBox = driver.findElement(By.xpath("//input[@data-marker='delivery-filter/input']"));
+        WebElement checkBox = driver.findElement(By.xpath("//input[@data-marker='search-form/with-images']"));
         if (!checkBox.isSelected()) {
-            checkBox.click();
-        }
+            checkBox.click(); }
         driver.findElement(By.xpath("//button[@data-marker='search-filters/submit-button']")).click();
         Thread.sleep(1000);
 
@@ -53,9 +62,13 @@ public class Main {
         for (int i = 0; i < 3; i++) {
             System.out.println("Принтер №" + (i + 1));
             System.out.println(printers.get(i).findElement(By.xpath("./div/div[@class='snippet-title-row']/h3/a")).getText());
-            System.out.println(printers.get(i).findElement(By.xpath("./div/div[@class='snippet-price-row']/span[@class='snippet-price ']")).getText());
+            System.out.println(printers.get(i).findElement(By.xpath("./div/div[@class='snippet-price-row']/span[@class='snippet-price']")).getText());
         }
 
 
+    }
+    @AfterMethod
+    public void close() {
+        driver.quit();
     }
 }
