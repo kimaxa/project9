@@ -17,12 +17,13 @@ public class Main {
     public void start() {
         System.setProperty("webdriver.chrome.driver", "D:\\chromedriver_win32\\chromedriver.exe");
         driver = new ChromeDriver();
-    }
-    @Test
-    public void test() throws InterruptedException {
         driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.get("https://www.avito.ru/");
+        driver.manage().window().maximize();
+    }
+    @Test
+    public void test() throws InterruptedException {
 
         // Выбрать в выпадающем списке “категория” значение оргтехника и расходники
         Select categorySelector = new Select(driver.findElement(By.xpath("//select[@id='category']")));
@@ -53,8 +54,8 @@ public class Main {
         Thread.sleep(1000);
 
         //В выпадающем списке фильтрации выбрать фильтрацию по убыванию цены.
-        Select priceSelector = new Select(driver.findElement(By.xpath("//div[@class='form-select-v2 sort-select-3QxXG']")));
-        priceSelector.selectByVisibleText("Дороже");
+        driver.findElement(By.xpath("//div[@class='form-select-v2 sort-select-3QxXG']//option[@value='101']")).click();
+        driver.findElement(By.xpath("/div[@class='form-select-v2 sort-select-3QxXG']//option[@value='2']")).click();
         Thread.sleep(1000);
 
         //Вывести в консоль название и стоимость 3х самых дорогих принтеров
